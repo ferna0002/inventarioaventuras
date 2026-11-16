@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas | Aventuras del Sur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-success">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'actividades_user' %}">
+            🌿 Aventuras del Sur
+        </a>
+
+        <a href="{% url 'actividades_user' %}" class="btn btn-outline-light btn-sm">
+            Volver a experiencias
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+    <h2 class="fw-bold text-success mb-2">Gestión de reservas</h2>
+
+    <p class="text-muted mb-4">
+        Consulta las reservas realizadas por los turistas.
+    </p>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-success text-white py-3">
+            <h5 class="mb-0">Reservas registradas</h5>
+        </div>
+
+        <div class="card-body">
+
+            {% if reservas %}
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Turista</th>
+                                <th>Experiencia</th>
+                                <th>Categoría</th>
+                                <th>Fecha de reserva</th>
+                                <th>Estado del pago</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for reserva in reservas %}
+                                <tr>
+                                    <td>
+                                        {{ reserva.usuario.username }}
+                                    </td>
+
+                                    <td>
+                                        {{ reserva.actividad.titulo }}
+                                    </td>
+
+                                    <td>
+                                        {{ reserva.actividad.categoria.nombre }}
+                                    </td>
+
+                                    <td>
+                                        {{ reserva.fecha_reserva|date:"d/m/Y H:i" }}
+                                    </td>
+
+                                    <td>
+                                        {% if reserva.estado_pago == 'confirmado' %}
+                                            <span class="badge bg-success">
+                                                Confirmado
+                                            </span>
+                                        {% elif reserva.estado_pago == 'por_verificar' %}
+                                            <span class="badge bg-info text-dark">
+                                                Por verificar
+                                            </span>
+                                            <form method="POST" action="{% url 'confirmar_pago' reserva.id %}" class="mt-2">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    Confirmar pago
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">
+                                                Pendiente
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <p class="text-muted mb-0">
+                    Total de reservas: {{ reservas|length }}
+                </p>
+
+            {% else %}
+
+                <div class="text-center py-5">
+                    <h5 class="text-muted">
+                        Todavía no hay reservas registradas.
+                    </h5>
+                    <p class="text-muted mb-0">
+                        Cuando los turistas reserven experiencias,
+                        aparecerán aquí.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends 'panel/base_panel.html' %}
+{% block title %}Panel guía | Aventuras del Sur{% endblock %}
+{% block content %}
+<h2 class="text-success fw-bold mb-4">Experiencias</h2>
+<div class="card shadow-sm border-0" style="max-width: 520px;">
+  <div class="card-body">
+    <div class="text-muted">Mis experiencias creadas</div>
+    <div class="fs-2 fw-bold">{{ cantidad_actividades }}</div>
+    <p class="text-muted mb-3">Desde esta sección puedes revisar y editar las experiencias que has creado.</p>
+    <a href="{% url 'actividades_user' %}" class="btn btn-success">Ver experiencias</a>
+  </div>
+</div>
+{% endblock %}

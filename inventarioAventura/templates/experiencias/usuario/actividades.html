@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Experiencias - Aventuras del Sur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'inicio' %}">
+            🌿 Aventuras del Sur
+        </a>
+
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link active" href="{% url 'actividades_user' %}">
+                Experiencias
+            </a>
+
+            {% if user.is_authenticated %}
+                {% if user.is_superuser or user.perfil.rol == 'administrador' %}
+                    <a class="nav-link" href="{% url 'categoria_list' %}">
+                        Gestionar categorías
+                    </a>
+                    <a class="nav-link" href="{% url 'gestion_actividades_list' %}">
+                        Todas las actividades
+                    </a>
+                    <a class="nav-link" href="{% url 'todas_las_reservas' %}">
+                        Todas las reservas
+                    </a>
+
+                {% elif user.perfil.rol == 'guia' %}
+                    {# El guía administra sus experiencias desde el botón Experiencias #}
+
+                {% elif user.perfil.rol == 'turista' %}
+                    <a class="nav-link" href="{% url 'mis_reservas' %}">
+                        Mis reservas
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="container my-5">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+        <h2 class="fw-bold text-success mb-0">
+            Lista de Actividades
+        </h2>
+
+        {% if user.is_authenticated %}
+            {% if user.is_superuser or user.perfil.rol == 'administrador' %}
+                <a href="{% url 'crear_actividades' %}" class="btn btn-success">
+                    + Crear actividad
+                </a>
+
+            {% elif user.perfil.rol == 'guia' %}
+                <a href="{% url 'crear_actividades' %}" class="btn btn-success">
+                    + Crear actividad
+                </a>
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+    <div class="row">
+
+        {% for exp in experiencias %}
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100 border-0 rounded-4">
+                    <div class="card-body p-4">
+
+                        <span class="badge bg-success mb-2">
+                            {{ exp.categoria.nombre }}
+                        </span>
+
+                        <h4 class="card-title fw-bold text-dark">
+                            {{ exp.titulo }}
+                        </h4>
+
+                        <p class="card-text text-muted">
+                            {{ exp.descripcion }}
+                        </p>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fs-5 fw-bold text-success">
+                                ${{ exp.precio }}
+                            </span>
+
+                            <small class="text-secondary">
+                                Cupos: {{ exp.cupo_maximo }}
+                            </small>
+                        </div>
+
+                        {% if user.is_authenticated %}
+                            {% if user.perfil.rol == 'turista' %}
+                                <hr>
+
+                                <form method="POST" action="{% url 'reservar_actividad' exp.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success w-100">
+                                        Reservar experiencia
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+        {% empty %}
+
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-warning">
+                    No hay experiencias registradas todavía.
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

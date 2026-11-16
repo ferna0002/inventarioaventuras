@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventuras del Sur - Ecoparque</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
+        <div class="container-fluid">
+
+            <a class="navbar-brand fw-bold text-success" href="/">
+                🌿 Aventuras del Sur
+            </a>
+
+            <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#menuPrincipal">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="menuPrincipal">
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/actividades_user/">
+                            Experiencias
+                        </a>
+                    </li>
+
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+
+                    {% if user.is_authenticated %}
+
+                        <span class="text-success">
+                            Hola, {{ user.username }}
+                        </span>
+
+                        <form method="POST" action="{% url 'cerrar_sesion' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger">
+                                Cerrar sesión
+                            </button>
+                        </form>
+
+                    {% else %}
+
+                        <a href="{% url 'iniciar_sesion' %}"
+                           class="btn btn-outline-success">
+                            Iniciar sesión
+                        </a>
+
+                        <a href="{% url 'registro' %}"
+                           class="btn btn-success">
+                            Registrarse
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- MENSAJES DEL SISTEMA -->
+    <div class="container mt-4">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+
+                    <button type="button" class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Cerrar">
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+    <header class="container my-5 text-center">
+
+        <h1 class="display-4 fw-bold">
+            Bienvenido a Aventuras del Sur
+        </h1>
+
+        <p class="lead text-muted">
+            Descubre el mejor ecoparque: trekking, canopy,
+            kayak y arriendo de equipos en la Patagonia.
+        </p>
+
+        <hr class="my-4">
+
+        <a class="btn btn-success btn-lg"
+           href="/actividades_user/">
+            Ver Experiencias
+        </a>
+
+    </header>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
